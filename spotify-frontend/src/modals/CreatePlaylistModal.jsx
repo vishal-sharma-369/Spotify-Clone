@@ -36,19 +36,19 @@ const CreatePlaylistModal = ({ closeModal }) => {
           <TextInput
             label="Name"
             placeholder="Playlist Name"
-            labelClassName="text-white"
+            labelClassName="text-black"
             value={playlistName}
             setValue={setPlaylistName}
           />
           <TextInput
             label="Thumbnail"
             placeholder="Thumbnail"
-            labelClassName="text-white"
+            labelClassName="text-black"
             value={playlistThumbnail}
             setValue={setPlaylistThumbnail}
           />
           <div
-            className="w-1/3 bg-white rounded flex font-semibold justify-center items-center py-3 mt-4 cursor-pointer"
+            className="w-1/3 bg-white text-black rounded flex font-semibold justify-center items-center py-3 mt-4 cursor-pointer"
             onClick={createPlaylist}
           >
             Create

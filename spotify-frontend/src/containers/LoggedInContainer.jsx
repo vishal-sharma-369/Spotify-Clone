@@ -10,6 +10,7 @@ import songContext from "../contexts/songContext";
 import CreatePlaylistModal from "../modals/CreatePlaylistModal";
 import AddToPlaylistModal from "../modals/AddToPlaylistModal";
 import { makeAuthenticatedPOSTRequest } from "../utils/serverHelpers";
+import { useNavigate } from "react-router-dom";
 
 const LoggedInContainer = ({ children, currentActiveScreen }) => {
   const [createPlaylistModalOpen, setCreatePlaylistModalOpen] = useState(false);
@@ -17,6 +18,7 @@ const LoggedInContainer = ({ children, currentActiveScreen }) => {
   const { isPaused, soundPlayed, setSoundPlayed, setIsPaused } =
     useContext(songContext);
   const firstUpdate = useRef(true);
+  const navigate = useNavigate();
 
   const { currentSong, setCurrentSong } = useContext(songContext);
 
@@ -27,7 +29,7 @@ const LoggedInContainer = ({ children, currentActiveScreen }) => {
       "/playlist/add/song",
       payload
     );
-    if (response._id) {
+    if (response.playlist._id) {
       setAddToPlaylistModalOpen(false);
     }
   };
@@ -153,7 +155,12 @@ const LoggedInContainer = ({ children, currentActiveScreen }) => {
                 <div className="h-1/2 border-right border-white"></div>
               </div>
               <div className="w-1/3 flex justify-around h-full items-center">
-                <TextWithHover displayText="Upload Song" />
+                <TextWithHover
+                  displayText="Upload Song"
+                  onClick={() => {
+                    navigate("/uploadsong");
+                  }}
+                />
                 <div className="bg-white w-10 h-10 rounded-full font-semibold cursor-pointer flex items-center justify-center">
                   VS
                 </div>
