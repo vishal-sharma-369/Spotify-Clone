@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import spotify_logo from "../assets/images/spotify_logo_white.svg";
 import IconText from "../components/shared/IconText";
 import { Icon } from "@iconify/react";
 import TextWithHover from "../components/shared/TextWithHover";
+import { makeUnauthenticatedGETRequest } from "../utils/serverHelpers";
+import { useNavigate } from "react-router-dom";
 
 const focusCardsData = [
   {
@@ -43,9 +45,23 @@ const focusCardsData = [
 ];
 
 const Home = () => {
+  const navigate = useNavigate();
+  const [cardsData, setCardsData] = useState([]);
+  useEffect(() => {
+    const getData = async () => {
+      const response = await makeUnauthenticatedGETRequest(
+        "/playlist/get/playlists"
+      );
+      setCardsData(response);
+      console.log(response);
+    };
+
+    getData();
+  }, []);
+
   return (
     <div className="h-full w-full flex">
-      <div className="h-full w-1/5 bg-black flex flex-col justify-between pb-10">
+      <div className="h-full w-1/6 bg-black flex flex-col justify-between pb-10">
         <div>
           <div className="logoDiv p-6">
             <img src={spotify_logo} alt="spotify_logo" width={125} />
@@ -54,23 +70,31 @@ const Home = () => {
             <IconText
               iconName="material-symbols:home"
               displayText="Home"
+              targetLink="/home"
               active
             />
             <IconText
               iconName="material-symbols:search-rounded"
               displayText="Search"
+              targetLink="/search"
             />
             <IconText
               iconName="icomoon-free:books"
               displayText="Your Library"
+              targetLink="/login"
             />
           </div>
           <div className="pt-5">
             <IconText
               iconName="material-symbols:add-box"
               displayText="Create Playlist"
+              targetLink="/login"
             />
-            <IconText iconName="mdi:cards-heart" displayText="Liked Songs" />
+            <IconText
+              iconName="mdi:cards-heart"
+              displayText="Liked Songs"
+              targetLink="/login"
+            />
           </div>
         </div>
         <div className="px-5">
@@ -82,7 +106,7 @@ const Home = () => {
       </div>
 
       {/* This second div will be the right part(main content) */}
-      <div className="h-full w-4/5 bg-app-black overflow-auto">
+      <div className="h-full w-5/6 bg-app-black overflow-auto">
         <div className="navbar w-full h-1/10 bg-black bg-opacity-30 flex items-center justify-end">
           <div className="w-1/2 h-full flex">
             <div className="w-3/5 flex justify-around items-center">
@@ -92,20 +116,37 @@ const Home = () => {
               <div className="h-1/2 border-right border-white"></div>
             </div>
             <div className="w-2/5 flex justify-around h-full items-center">
-              <TextWithHover displayText="Sign up" />
-              <div className="bg-white h-2/3 px-8 rounded-full font-semibold cursor-pointer flex items-center justify-center">
+              <TextWithHover
+                onClick={() => {
+                  navigate("/signup");
+                }}
+                displayText="Sign up"
+              />
+              <div
+                onClick={() => {
+                  navigate("/login");
+                }}
+                className="bg-white h-2/3 px-8 rounded-full font-semibold cursor-pointer flex items-center justify-center"
+              >
                 Log in
               </div>
             </div>
           </div>
         </div>
         <div className="content px-8 overflow-auto">
-          <PlaylistView titleText="Focus" cardsData={focusCardsData} />
+          {/* <PlaylistView titleText="Focus" cardsData={focusCardsData} />
           <PlaylistView
             titleText="Spotify Playlist"
             cardsData={focusCardsData}
           />
-          <PlaylistView titleText="Sound of India" cardsData={focusCardsData} />
+          <PlaylistView titleText="Sound of India" cardsData={focusCardsData} /> */}
+          {cardsData.map((playlist, index) => (
+            <PlaylistView
+              key={index}
+              titleText={playlist.name}
+              cardsData={playlist.songs}
+            />
+          ))}
         </div>
       </div>
     </div>
@@ -116,16 +157,20 @@ const PlaylistView = ({ titleText, cardsData }) => {
   return (
     <div className="text-white mt-8">
       <div className="text-2xl font-semibold mb-5">{titleText}</div>
-      <div className="w-full flex justify-between space-x-4">
+      <div
+        className={`w-full flex ${
+          cardsData.length >= 5 ? "justify-between" : ""
+        } space-x-4`}
+      >
         {
           // cards data will be an array containing data of different cards
           cardsData.map((item) => {
             return (
               <Card
-                title={item.title}
-                description={item.description}
-                imgUrl={item.imgUrl}
                 key={item.key}
+                title={item.name}
+                description={item.description}
+                imgUrl={item.thumbnail}
               />
             );
           })
@@ -137,12 +182,17 @@ const PlaylistView = ({ titleText, cardsData }) => {
 
 const Card = ({ title, description, imgUrl }) => {
   return (
-    <div className="bg-black bg-opacity-40 w-1/5 p-4 rounded-lg">
+    <div className="bg-black bg-opacity-40 w-1/5 p-4 rounded-lg cursor-pointer">
       <div className="pb-4 pt-2">
-        <img className="w-full rounded-md h-52" src={imgUrl} alt="label" />
+        <img
+          className="w-full rounded-md h-52 object-cover"
+          src={imgUrl}
+          alt="label"
+        />
       </div>
       <div className="text-white font-semibold py-3">{title}</div>
-      <div className="text-gray-500 text-sm">{description}</div>
+      {/* <div className="text-gray-500 text-sm">{description}</div> */}{" "}
+      {/*I am leaving this for now but i have to correct this later on , The above description part */}
     </div>
   );
 };

@@ -1,7 +1,10 @@
 import { useState } from "react";
 import LoggedInContainer from "../containers/LoggedInContainer";
 import { Icon } from "@iconify/react";
-import { makeAuthenticatedGETRequest } from "../utils/serverHelpers";
+import {
+  makeAuthenticatedGETRequest,
+  makeUnauthenticatedGETRequest,
+} from "../utils/serverHelpers";
 import SingleSongCard from "../components/shared/SingleSongCard";
 
 const Search = () => {
@@ -11,7 +14,7 @@ const Search = () => {
 
   const searchSong = async () => {
     // This function will call the search api for finding all the songs with a particular name
-    const response = await makeAuthenticatedGETRequest(
+    const response = await makeUnauthenticatedGETRequest(
       "/song/get/songname/" + searchText
     );
     setSongData(response.data);

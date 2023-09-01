@@ -9,6 +9,7 @@ const User = require("./models/User");
 const authRoutes = require("./routes/auth");
 const songRoutes = require("./routes/song");
 const playlistRoutes = require("./routes/playlist");
+const userRoutes = require("./routes/user");
 const cors = require("cors");
 app.use(cors());
 
@@ -58,6 +59,7 @@ app.get("/", (req, res) => {
   res.send("api is working correctly in the background");
 });
 
+app.use("/get", userRoutes);
 app.use("/auth", authRoutes);
 app.use("/song", songRoutes);
 app.use("/playlist", playlistRoutes);

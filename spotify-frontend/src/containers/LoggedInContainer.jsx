@@ -1,5 +1,5 @@
-import React, { useLayoutEffect, useRef } from "react";
-import spotify_logo from "../assets/images/spotify_logo_white.svg";
+import React, { useEffect, useLayoutEffect, useRef } from "react";
+import spotify_logo from "../assets/images/spotify-logo-light-green.svg";
 import IconText from "../components/shared/IconText";
 import { Icon } from "@iconify/react";
 import TextWithHover from "../components/shared/TextWithHover";
@@ -9,14 +9,20 @@ import { useContext } from "react";
 import songContext from "../contexts/songContext";
 import CreatePlaylistModal from "../modals/CreatePlaylistModal";
 import AddToPlaylistModal from "../modals/AddToPlaylistModal";
-import { makeAuthenticatedPOSTRequest } from "../utils/serverHelpers";
+import {
+  makeAuthenticatedGETRequest,
+  makeAuthenticatedPOSTRequest,
+  makeAuthenticatedPUTRequest,
+} from "../utils/serverHelpers";
 import { useNavigate } from "react-router-dom";
+import userContext from "../contexts/userContext";
 
 const LoggedInContainer = ({ children, currentActiveScreen }) => {
   const [createPlaylistModalOpen, setCreatePlaylistModalOpen] = useState(false);
   const [addToPlaylistModalOpen, setAddToPlaylistModalOpen] = useState(false);
   const { isPaused, soundPlayed, setSoundPlayed, setIsPaused } =
     useContext(songContext);
+  const { user, setUser } = useContext(userContext);
   const firstUpdate = useRef(true);
   const navigate = useNavigate();
 
@@ -76,6 +82,24 @@ const LoggedInContainer = ({ children, currentActiveScreen }) => {
     changeSound(currentSong.track);
   }, [currentSong && currentSong.track]);
 
+  useEffect(() => {
+    window.addEventListener("keydown", (e) => {
+      e.preventDefault();
+      if (e.key === " ") {
+        if (!soundPlayed) return;
+        else {
+          if (isPaused) {
+            soundPlayed.play();
+            setIsPaused(false);
+          } else {
+            soundPlayed.pause();
+            setIsPaused(true);
+          }
+        }
+      }
+    });
+  }, [soundPlayed, isPaused, setIsPaused]);
+
   return (
     <div className="h-full w-full bg-app-black">
       {createPlaylistModalOpen && (
@@ -94,7 +118,7 @@ const LoggedInContainer = ({ children, currentActiveScreen }) => {
         />
       )}
       <div className={`w-full ${currentSong ? "h-9/10" : "h-full"} flex`}>
-        <div className="h-full w-1/5 bg-black flex flex-col justify-between pb-10">
+        <div className="h-full w-1/6 bg-black flex flex-col justify-between pb-10">
           <div>
             <div className="logoDiv p-6">
               <img src={spotify_logo} alt="spotify_logo" width={125} />
@@ -127,6 +151,12 @@ const LoggedInContainer = ({ children, currentActiveScreen }) => {
             </div>
             <div className="pt-5">
               <IconText
+                iconName="material-symbols:upload"
+                displayText="Upload Song"
+                onClick={() => {}}
+                targetLink="/uploadsong"
+              />
+              <IconText
                 iconName="material-symbols:add-box"
                 displayText="Create Playlist"
                 onClick={() => {
@@ -145,14 +175,13 @@ const LoggedInContainer = ({ children, currentActiveScreen }) => {
         </div>
 
         {/* This second div will be the right part(main content) */}
-        <div className="h-full w-4/5 bg-app-black overflow-auto">
+        <div className="h-full w-5/6 bg-app-black overflow-auto">
           <div className="navbar w-full h-1/10 bg-black bg-opacity-30 flex items-center justify-end">
             <div className="w-1/2 h-full flex">
               <div className="w-2/3 flex justify-around items-center">
                 <TextWithHover displayText="Premium" />
                 <TextWithHover displayText="Support" />
                 <TextWithHover displayText="Download" />
-                <div className="h-1/2 border-right border-white"></div>
               </div>
               <div className="w-1/3 flex justify-around h-full items-center">
                 <TextWithHover
@@ -161,7 +190,10 @@ const LoggedInContainer = ({ children, currentActiveScreen }) => {
                     navigate("/uploadsong");
                   }}
                 />
-                <div className="bg-white w-10 h-10 rounded-full font-semibold cursor-pointer flex items-center justify-center">
+                <div
+                  className="bg-white w-10 h-10 mx-5 rounded-full font-semibold cursor-pointer flex items-center justify-center"
+                  onClick={() => {}}
+                >
                   VS
                 </div>
               </div>
@@ -236,10 +268,26 @@ const LoggedInContainer = ({ children, currentActiveScreen }) => {
                 setAddToPlaylistModalOpen(true);
               }}
             />
+            {
+              // console.log(user.likedSongs)
+              console.log(currentSong._id)
+            }
             <Icon
-              icon="ph:heart-bold"
+              icon={
+                user.likedSongs.includes(currentSong._id)
+                  ? "mdi:heart"
+                  : "ph:heart-bold"
+              }
+              color="#1ed760"
               fontSize={25}
               className="cursor-pointer text-gray-500 hover:text-white"
+              onClick={async () => {
+                await makeAuthenticatedPUTRequest(
+                  `/song/like/${currentSong._id}`
+                );
+                const response = await makeAuthenticatedGETRequest("/get/user");
+                setUser(response);
+              }}
             />
           </div>
         </div>

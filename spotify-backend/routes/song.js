@@ -48,14 +48,36 @@ router.get(
 );
 
 // Get route to get a single song by name.
-router.get(
-  "/get/songname/:songName",
+router.get("/get/songname/:songName", async (req, res) => {
+  const { songName } = req.params;
+
+  const songs = await Song.find({ name: songName }).populate("artist");
+  return res.status(200).json({ data: songs });
+});
+
+// PUT route to like a single song
+router.put(
+  "/like/:songId",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    const { songName } = req.params;
+    let user = req.user;
+    const { songId } = req.params;
+    if (user) {
+      if (!user.likedSongs.includes(songId)) {
+        user.likedSongs.push(songId);
+        await user.save();
+      } else {
+        user.likedSongs = user.likedSongs.filter(
+          (song) => String(song) !== songId
+        );
+        await user.save();
+      }
+    }
 
-    const songs = await Song.find({ name: songName }).populate("artist");
-    return res.status(200).json({ data: songs });
+    return res.status(201).json({
+      message:
+        "Successfully updated the entry of song user model liked songs array",
+    });
   }
 );
 

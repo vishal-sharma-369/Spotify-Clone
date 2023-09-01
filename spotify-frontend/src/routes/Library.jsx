@@ -43,7 +43,11 @@ const Card = ({ title, description, imgUrl, playlistId }) => {
       }}
     >
       <div className="pb-4 pt-2">
-        <img className="w-full rounded-md h-52" src={imgUrl} alt="label" />
+        <img
+          className="w-full rounded-md h-52 object-cover"
+          src={imgUrl}
+          alt="label"
+        />
       </div>
       <div className="text-white font-semibold py-3">{title}</div>
       <div className="text-gray-500 text-sm">{description}</div>

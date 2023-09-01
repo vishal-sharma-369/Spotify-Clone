@@ -29,6 +29,16 @@ router.post(
   }
 );
 
+router.get("/get/playlists", async (req, res) => {
+  const playlists = await Playlist.find({}).populate({
+    path: "songs",
+  });
+
+  if (!playlists) {
+    return res.status(301).json({ error: "Invalid request" });
+  } else return res.status(200).json(playlists);
+});
+
 // creating a route to get a playlist using playlistId
 router.get(
   "/get/playlist/:playlistId",

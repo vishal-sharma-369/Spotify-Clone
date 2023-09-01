@@ -94,7 +94,7 @@ const UploadSong = () => {
               <TextInput
                 label="Name"
                 placeholder="Name"
-                labelClassName="text-white"
+                labelClassName="text-black"
                 value={name}
                 setValue={setName}
               />
@@ -102,7 +102,7 @@ const UploadSong = () => {
             <div className="w-1/2">
               <TextInput
                 label="Thumbnail"
-                labelClassName="text-white"
+                labelClassName="text-black"
                 placeholder="Thumbnail"
                 value={thumbnail}
                 setValue={setThumbnail}

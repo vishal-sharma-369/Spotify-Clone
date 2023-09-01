@@ -1,5 +1,15 @@
-import React from "react";
+import React, {
+  useState,
+  useEffect,
+  useContext,
+  useReducer,
+  useRef,
+} from "react";
 import LoggedInContainer from "../containers/LoggedInContainer";
+import { makeUnauthenticatedGETRequest } from "../utils/serverHelpers";
+import songContext from "../contexts/songContext";
+import { useNavigate } from "react-router-dom";
+import { Icon } from "@iconify/react";
 
 const focusCardsData = [
   {
@@ -40,11 +50,31 @@ const focusCardsData = [
 ];
 
 const LoggedInHome = () => {
+  const [cardsData, setCardsData] = useState([]);
+  useEffect(() => {
+    const getData = async () => {
+      const response = await makeUnauthenticatedGETRequest(
+        "/playlist/get/playlists"
+      );
+      setCardsData(response);
+      console.log(response);
+    };
+
+    getData();
+  }, []);
   return (
     <LoggedInContainer currentActiveScreen="home">
-      <PlaylistView titleText="Focus" cardsData={focusCardsData} />
+      {/* <PlaylistView titleText="Focus" cardsData={focusCardsData} />
       <PlaylistView titleText="Spotify Playlist" cardsData={focusCardsData} />
-      <PlaylistView titleText="Sound of India" cardsData={focusCardsData} />
+      <PlaylistView titleText="Sound of India" cardsData={focusCardsData} /> */}
+      {cardsData.map((playlist, index) => (
+        <PlaylistView
+          key={index}
+          titleText={playlist.name}
+          cardsData={playlist.songs}
+          playlistId={playlist._id}
+        />
+      ))}
     </LoggedInContainer>
   );
 };
@@ -213,20 +243,36 @@ const LoggedInHome = () => {
 //   );
 // };
 
-const PlaylistView = ({ titleText, cardsData }) => {
+const PlaylistView = ({ titleText, cardsData, playlistId }) => {
+  const navigate = useNavigate();
   return (
     <div className="text-white mt-8">
-      <div className="text-2xl font-semibold mb-5">{titleText}</div>
-      <div className="w-full flex justify-between space-x-4">
+      <div className="text-2xl font-semibold mb-5 flex justify-between items-center ">
+        <div>{titleText}</div>
+        <div
+          className="p-4 cursor-pointer hover:bg-gray-500 transition-all rounded-full"
+          onClick={() => {
+            navigate(`/playlist/${playlistId}`);
+          }}
+        >
+          <Icon icon="mingcute:right-fill" fontSize={32} />
+        </div>
+      </div>
+      <div
+        className={`w-full flex ${
+          cardsData.length >= 5 ? "justify-between" : ""
+        } space-x-4`}
+      >
         {
           // cards data will be an array containing data of different cards
           cardsData.map((item) => {
             return (
               <Card
-                title={item.title}
-                description={item.description}
-                imgUrl={item.imgUrl}
                 key={item.key}
+                title={item.name}
+                description={item.description}
+                imgUrl={item.thumbnail}
+                item={item}
               />
             );
           })
@@ -236,11 +282,26 @@ const PlaylistView = ({ titleText, cardsData }) => {
   );
 };
 
-const Card = ({ title, description, imgUrl }) => {
+const Card = ({ title, description, imgUrl, item }) => {
+  const { currentSong, setCurrentSong } = useContext(songContext);
+
   return (
-    <div className="bg-black bg-opacity-40 w-1/5 p-4 rounded-lg">
+    <div
+      className="bg-black bg-opacity-40 w-1/5 p-4 rounded-lg cursor-pointer"
+      onClick={() => setCurrentSong(item)}
+    >
       <div className="pb-4 pt-2">
-        <img className="w-full rounded-md h-52" src={imgUrl} alt="label" />
+        <img
+          className="w-full rounded-md h-52 object-cover transition-all"
+          src={imgUrl}
+          alt="label"
+          onMouseEnter={(e) => {
+            e.target.style.transform = "scale(1.1)";
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.transform = "scale(1)";
+          }}
+        />
       </div>
       <div className="text-white font-semibold py-3">{title}</div>
       <div className="text-gray-500 text-sm">{description}</div>
