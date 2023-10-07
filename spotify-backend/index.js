@@ -14,7 +14,7 @@ const cors = require("cors");
 app.use(cors());
 
 const dbUrl = `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@cluster0.jwmrw1k.mongodb.net/?retryWrites=true&w=majority`;
-const localdb = "mongodb://127.0.0.1/27017";
+const localdb = "mongodb://127.0.0.1/spotify-clone";
 
 app.use(express.json());
 
