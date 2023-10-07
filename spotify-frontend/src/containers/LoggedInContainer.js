@@ -153,8 +153,8 @@ const LoggedInContainer = ({ children, currentActiveScreen }) => {
               <IconText
                 iconName="material-symbols:upload"
                 displayText="Upload Song"
-                onClick={() => {}}
                 targetLink="/uploadsong"
+                active={currentActiveScreen === "Upload Song"}
               />
               <IconText
                 iconName="material-symbols:add-box"

@@ -53,7 +53,6 @@ const Home = () => {
         "/playlist/get/playlists"
       );
       setCardsData(response);
-      console.log(response);
     };
 
     getData();

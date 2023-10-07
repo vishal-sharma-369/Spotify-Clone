@@ -26,6 +26,7 @@ function App() {
       const response = await makeAuthenticatedGETRequest("/get/user");
       setUser(response);
     };
+    if (cookie.token)
     getUser();
   }, []);
 
@@ -45,10 +46,6 @@ function App() {
               }}
             >
               <Routes>
-                <Route
-                  path="/"
-                  element={<div className="bg-blue-500">Hello</div>}
-                />
                 <Route path="/home" element={<LoggedInHome />} />
                 <Route path="/uploadsong" element={<UploadSong />} />
                 <Route path="/mymusic" element={<MyMusic />} />

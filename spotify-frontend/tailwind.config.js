@@ -7,8 +7,8 @@ module.exports = {
         poppins: ["Poppins", "sans-serif"],
       },
       height: {
-        "1/10": "10%",
-        "9/10": "90%",
+        "1/10": "8%",
+        "9/10": "92%",
       },
       backgroundColor: {
         "app-black": "#121212",

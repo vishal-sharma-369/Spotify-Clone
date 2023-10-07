@@ -34,17 +34,17 @@ const Search = () => {
           <input
             type="text"
             placeholder="What do you want to listen to?"
-            className="w-full bg-gray-800 focus:outline-none"
+            className="w-full bg-gray-800 focus:outline-none text-white"
             onFocus={() => setIsInputFocused(true)}
             onBlur={() => setIsInputFocused(false)}
             value={searchText}
-            onChange={(e) => {
-              setSearchText(e.target.value);
-            }}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 searchSong();
               }
+            }}
+            onChange={(e) => {
+              setSearchText(e.target.value);
             }}
           />
         </div>

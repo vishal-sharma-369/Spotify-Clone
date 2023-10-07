@@ -4,8 +4,8 @@ import { useState } from "react";
 import { makeAuthenticatedPOSTRequest } from "../utils/serverHelpers";
 
 const CreatePlaylistModal = ({ closeModal }) => {
-  const [playlistName, setPlaylistName] = useState("");
-  const [playlistThumbnail, setPlaylistThumbnail] = useState("");
+  const [playlistName, setPlaylistName] = useState("Personal Songs");
+  const [playlistThumbnail, setPlaylistThumbnail] = useState("https://source.unsplash.com/nlyWZtWTzCo");
 
   const createPlaylist = async () => {
     const response = await makeAuthenticatedPOSTRequest("/playlist/create", {
