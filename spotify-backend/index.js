@@ -13,9 +13,9 @@ const userRoutes = require("./routes/user");
 const cors = require("cors");
 app.use(cors());
 
-const dbUrl = `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@cluster0.jwmrw1k.mongodb.net/?retryWrites=true&w=majority`;
-const localdb = "mongodb://127.0.0.1/spotify-clone";
-
+// const dbUrl = `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@cluster0.jwmrw1k.mongodb.net/?retryWrites=true&w=majority`;
+// const localdb = "mongodb://127.0.0.1/spotify-clone";
+const localdb = process.env.LOCAL_DB;
 app.use(express.json());
 
 mongoose
